@@ -1,0 +1,74 @@
+---
+title: "Geocoding"
+output: html_document
+date: "2023-10-17"
+---
+
+
+
+# Library
+
+```{r}
+
+library(tidyverse)
+library(usmap)
+library(tidycensus)
+library(tigris)
+library(tidygeocoder)
+
+```
+
+
+# Read in data
+
+```{r}
+ 
+sites <- read_csv("/Users/jhm65/Dropbox/Git/Competition/data_processed/sites_geocoded.csv") %>% 
+  select(`BHCMIS ID`:`Site ZIP Code`, Zip)
+
+```
+
+
+# Code
+
+```{r}
+tbcoded <- sites
+
+
+coded <-  geo(street = tbcoded[c(1:10000),]$`Site Street Address`, 
+             city = tbcoded[c(1:10000),]$`Site City`, 
+             state = tbcoded[c(1:10000),]$`Site State`, 
+             method = "census", 
+             full_results = TRUE)
+  
+coded <- cbind(coded, geo(street = tbcoded[c(1:10000),]$`Site Street Address 3`, 
+             city = tbcoded[c(1:10000),]$`Site City`, 
+             state = tbcoded[c(1:10000),]$`Site State`, 
+             method = "census", 
+             full_results = TRUE))
+  
+coded <- cbind(coded,  geo(street = tbcoded[c(1:10000),]$`Site Street Address`, 
+             city = tbcoded[c(1:10000),]$`Site Street Address 2`, 
+             method = "census", 
+             full_results = TRUE))
+coded
+
+
+    
+```
+
+
+# Map
+```{r}
+eq_transformed <- usmap_transform(df.z.dist %>% 
+  left_join(zip.centroids %>% rename(lon = X, lat = Y) , by = c("Zip" = "ZipCode"))) %>% 
+  mutate(`Distance Travelled` = ifelse(DistToClosestSite > 25, ">25km", "<25km"))
+
+
+plot_usmap() +
+  geom_point(data = eq_transformed, aes(x = x, y = y, color = `Distance Travelled`)) +
+  labs(title = "Competitive Zip Codes",
+       subtitle = "By Distance Traveled by Rival") +
+  theme(legend.position = "right")
+```
+
