@@ -52,10 +52,60 @@ coded <- cbind(coded,  geo(street = tbcoded[c(1:10000),]$`Site Street Address`,
              city = tbcoded[c(1:10000),]$`Site Street Address 2`, 
              method = "census", 
              full_results = TRUE))
-coded
 
 
+
+for (g in 1:17){
+  print (g)
+ coded2 <-  geo(street = tbcoded[c((1 + g*10000):((g+1)*10000)),]$`Site Street Address`, 
+             city = tbcoded[c((1 + g*10000):((g+1)*10000)),]$`Site City`, 
+             state = tbcoded[c((1 + g*10000):((g+1)*10000)),]$`Site State`, 
+             method = "census", 
+             full_results = TRUE)
+  
+coded2 <- cbind(coded2, geo(street = tbcoded[c((1 + g*10000):((g+1)*10000)),]$`Site Street Address 3`, 
+             city = tbcoded[c((1 + g*10000):((g+1)*10000)),]$`Site City`, 
+             state = tbcoded[c((1 + g*10000):((g+1)*10000)),]$`Site State`, 
+             method = "census", 
+             full_results = TRUE))
+  
+coded2 <- cbind(coded2,  geo(street = tbcoded[c((1 + g*10000):((g+1)*10000)),]$`Site Street Address`, 
+             city = tbcoded[c((1 + g*10000):((g+1)*10000)),]$`Site Street Address 2`, 
+             method = "census", 
+             full_results = TRUE)) 
+coded <- rbind(coded, coded2)
+}
+
+
+
+ coded2 <-  geo(street = tbcoded[c(180001:188381),]$`Site Street Address`, 
+             city = tbcoded[c(180001:188381),]$`Site City`, 
+             state = tbcoded[c(180001:188381),]$`Site State`, 
+             method = "census", 
+             full_results = TRUE)
+  
+coded2 <- cbind(coded2, geo(street = tbcoded[c(180001:188381),]$`Site Street Address 3`, 
+             city = tbcoded[c(180001:188381),]$`Site City`, 
+             state = tbcoded[c(180001:188381),]$`Site State`, 
+             method = "census", 
+             full_results = TRUE))
+  
+coded2 <- cbind(coded2,  geo(street = tbcoded[c(180001:188381),]$`Site Street Address`, 
+             city = tbcoded[c(180001:188381),]$`Site Street Address 2`, 
+             method = "census", 
+             full_results = TRUE)) 
+coded <- rbind(coded, coded2)
+```
+
+
+```{r}
+
+sites.coded <- cbind(sites, coded[,c(4,5, 16,17, 27, 28)])
+
+write.csv(x = sites.coded, file = "/Users/jhm65/Dropbox/Git/Allocation/data_processed/sites_halfway_geocoded.csv", row.names = FALSE)
     
+read.csv("/Users/jhm65/Dropbox/Git/Allocation/data_processed/sites_halfway_geocoded.csv", colClasses = "character")
+
 ```
 
 
