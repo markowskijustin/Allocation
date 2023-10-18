@@ -108,6 +108,10 @@ sites.coded <- cbind(sites, coded[,c(4,5, 10, 16, 17, 22, 27, 28, 33)])
 
 ```
 
+
+## Next Cleaning Steps
+
+Need to finish the geocoding
 ```{r}
 sites.coded %>% 
   filter(is.na(lat) & is.na(lat.1) & is.na(lat.2)) 
