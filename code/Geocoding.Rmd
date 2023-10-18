@@ -127,10 +127,12 @@ eq_transformed <- usmap_transform(data = sites.coded  %>% mutate(lon = as.numeri
                                                                                   ifelse(is.na(lat) & is.na(lat.1), lat.2, lat)))) %>% filter(!is.na(lat))) %>% 
   mutate(year = as.numeric(Year)) %>% 
   arrange(BHCMIS.ID, Site.Name, Year) %>% 
-  filter(Year >= 1999)
+  filter(Year >= 1999) %>% 
+  filter(Site.State %in% c("CT","RI","MA","NH","VT","ME"))
+  #filter(Site.State %in% c("IL","IN","WI","MN","IA","MO","OH","MI"))
 
 
-grafico <- plot_usmap() +
+grafico <- plot_usmap(include = c("CT","RI","MA","NH","VT","ME")) +
   geom_point(data = eq_transformed, aes(x = x, y = y, col = Site.State), size = 0.25) +
   labs(title = "FQHC Care Delivery Location Growth",
        subtitle = "1999 - 2021") +
@@ -146,7 +148,7 @@ p <- grafico +
 
 p <- animate(p, nframes = length(1999:2021), fps = 4)
 
-anim_save("/Users/jhm65/Dropbox/Git/Allocation/visuals/growth.gif", p)
+#anim_save("/Users/jhm65/Dropbox/Git/Allocation/visuals/growth.gif", p)
 
 p
 ```
