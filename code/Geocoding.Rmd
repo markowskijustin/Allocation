@@ -15,7 +15,7 @@ library(usmap)
 library(tidycensus)
 library(tigris)
 library(tidygeocoder)
-
+library(gganimate)
 
 ```
 
@@ -100,26 +100,70 @@ coded <- rbind(coded, coded2)
 
 ```{r}
 
-sites.coded <- cbind(sites, coded[,c(4,5, 16,17, 27, 28)])
+sites.coded <- cbind(sites, coded[,c(4,5, 10, 16, 17, 22, 27, 28, 33)]) 
 
-write.csv(x = sites.coded, file = "/Users/jhm65/Dropbox/Git/Allocation/data_processed/sites_halfway_geocoded.csv", row.names = FALSE)
-    
-read.csv("/Users/jhm65/Dropbox/Git/Allocation/data_processed/sites_halfway_geocoded.csv", colClasses = "character")
+#write.csv(x = sites.coded, file = "/Users/jhm65/Dropbox/Git/Allocation/data_processed/sites_halfway_geocoded.csv", row.names = FALSE)
+#
+#sites.coded <- read.csv("/Users/jhm65/Dropbox/Git/Allocation/data_processed/sites_halfway_geocoded.csv", colClasses = "character")
 
 ```
 
+```{r}
+sites.coded %>% 
+  filter(is.na(lat) & is.na(lat.1) & is.na(lat.2)) 
+  
+```
 
 # Map
 ```{r}
-eq_transformed <- usmap_transform(df.z.dist %>% 
-  left_join(zip.centroids %>% rename(lon = X, lat = Y) , by = c("Zip" = "ZipCode"))) %>% 
-  mutate(`Distance Travelled` = ifelse(DistToClosestSite > 25, ">25km", "<25km"))
+
+eq_transformed <- usmap_transform(data = sites.coded %>% filter(!is.na(lat)) %>% mutate(lon = as.numeric(long), lat = as.numeric(lat))) %>% 
+  mutate(year = as.numeric(Year)) %>% 
+  arrange(BHCMIS.ID, Site.Name, Year)
 
 
-plot_usmap() +
-  geom_point(data = eq_transformed, aes(x = x, y = y, color = `Distance Travelled`)) +
+grafico <- plot_usmap() +
+  geom_point(data = eq_transformed, aes(x = x, y = y, col = Site.State)) +
   labs(title = "Competitive Zip Codes",
        subtitle = "By Distance Traveled by Rival") +
   theme(legend.position = "right")
 ```
+
+
+```{r}
+
+p <- grafico +
+  transition_time(year) +
+  labs(title = "Year: {frame_time}")
+
+p <- animate(p, nframes = 26, fps = 4)
+
+anim_save("/Users/jhm65/Dropbox/Git/Allocation/visuals/growth.gif", p)
+```
+
+
+
+
+```{r}
+
+library(gapminder)
+datos = gapminder
+head(datos)
+grafico <- datos %>%
+  ggplot() + 
+    geom_point(aes(x = gdpPercap, y = lifeExp, col = continent, size = pop), alpha = 0.8) + theme_minimal() + 
+    theme(legend.position = "bottom") + guides(size = "none") + 
+    labs(x = "PIB per Capita" ,y = "Esperanza de Vida",  col = "") 
+grafico +
+  transition_time(year) +
+  labs(title = "Año: {frame_time}")
+```
+
+
+
+
+
+
+
+
 
