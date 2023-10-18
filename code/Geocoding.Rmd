@@ -118,18 +118,22 @@ sites.coded %>%
   
 ```
 
-# Map
+# Map - missing 1998 data
 ```{r}
 
-eq_transformed <- usmap_transform(data = sites.coded %>% filter(!is.na(lat)) %>% mutate(lon = as.numeric(long), lat = as.numeric(lat))) %>% 
+eq_transformed <- usmap_transform(data = sites.coded  %>% mutate(lon = as.numeric(ifelse(is.na(long), long.1, 
+                                                                                  ifelse(is.na(long) & is.na(long.1), long.2, long))), 
+                                                                 lat = as.numeric(ifelse(is.na(lat), lat.1, 
+                                                                                  ifelse(is.na(lat) & is.na(lat.1), lat.2, lat)))) %>% filter(!is.na(lat))) %>% 
   mutate(year = as.numeric(Year)) %>% 
-  arrange(BHCMIS.ID, Site.Name, Year)
+  arrange(BHCMIS.ID, Site.Name, Year) %>% 
+  filter(Year >= 1999)
 
 
 grafico <- plot_usmap() +
-  geom_point(data = eq_transformed, aes(x = x, y = y, col = Site.State)) +
-  labs(title = "Competitive Zip Codes",
-       subtitle = "By Distance Traveled by Rival") +
+  geom_point(data = eq_transformed, aes(x = x, y = y, col = Site.State), size = 0.25) +
+  labs(title = "FQHC Care Delivery Location Growth",
+       subtitle = "1999 - 2021") +
   theme(legend.position = "right")
 ```
 
@@ -140,9 +144,11 @@ p <- grafico +
   transition_time(year) +
   labs(title = "Year: {frame_time}")
 
-p <- animate(p, nframes = 26, fps = 4)
+p <- animate(p, nframes = length(1999:2021), fps = 4)
 
 anim_save("/Users/jhm65/Dropbox/Git/Allocation/visuals/growth.gif", p)
+
+p
 ```
 
 
