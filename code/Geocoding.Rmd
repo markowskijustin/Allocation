@@ -144,11 +144,11 @@ grafico <- plot_usmap(include = c("CT","RI","MA","NH","VT","ME")) +
 
 p <- grafico +
   transition_time(year) +
-  labs(title = "Year: {frame_time}")
+  labs(title = "FQHC Growth by Year: {frame_time}")
 
 p <- animate(p, nframes = length(1999:2021), fps = 4)
 
-#anim_save("/Users/jhm65/Dropbox/Git/Allocation/visuals/growth.gif", p)
+anim_save("/Users/jhm65/Dropbox/Git/Allocation/visuals/growth.gif", p)
 
 p
 ```
