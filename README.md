@@ -13,4 +13,4 @@ Federally Qualified Health Centers are growing rapidly, having doubled over the 
 
 This work begins with 25 years of FQHC administrative data, which I then geocode to identify exactly where these care delivery sites are located. Building on my job market paper on FQHC competition, I evaluate the dispersive and attractivce forces at play in these markets for FQHC over time. 
 
-I then transition to the second phase, evaluating the resulting allocation of FQHCs on underserved communities. Specifically, I evaluate direct and indirect effects of FQHCs on community-level measures of equity, resilience, and development. 
+I then transition to the second phase, evaluating the resulting allocation of FQHCs on underserved communities. Specifically, I evaluate direct and indirect effects of FQHCs on community-level measures of equity, poverty, resilience, and development. 
