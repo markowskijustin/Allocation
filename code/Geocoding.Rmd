@@ -133,7 +133,7 @@ eq_transformed <- usmap_transform(data = sites.coded  %>% mutate(lon = as.numeri
 
 
 grafico <- plot_usmap(include = c("CT","RI","MA","NH","VT","ME")) +
-  geom_point(data = eq_transformed, aes(x = x, y = y, col = Site.State), size = 0.25) +
+  geom_point(data = eq_transformed, aes(x = x, y = y, col = Site.State), size = 0.5) +
   labs(title = "FQHC Care Delivery Location Growth",
        subtitle = "1999 - 2021") +
   theme(legend.position = "right")
