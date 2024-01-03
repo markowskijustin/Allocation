@@ -113,8 +113,16 @@ sites.coded <- cbind(sites, coded[,c(4,5, 10, 16, 17, 22, 27, 28, 33)])
 
 Need to finish the geocoding
 ```{r}
-sites.coded %>% 
-  filter(is.na(lat) & is.na(lat.1) & is.na(lat.2)) 
+tbcoded <- sites.coded %>% 
+  filter(is.na(lat) & is.na(lat.1) & is.na(lat.2)) %>% 
+  mutate(add = paste(Site.Street.Address, Site.Street.Address.2, sep = ", "))
+
+
+coded3 <- geo(address = tbcoded$add, 
+             method = "census", 
+             full_results = TRUE)
+
+tbcoded <- cbind(tbcoded, coded3 %>% select(lat, long, matched_address))
   
 ```
 
