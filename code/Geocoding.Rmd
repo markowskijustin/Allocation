@@ -123,6 +123,8 @@ coded3 <- geo(address = tbcoded$add,
              full_results = TRUE)
 
 tbcoded <- cbind(tbcoded, coded3 %>% select(lat, long, matched_address))
+
+
   
 ```
 
