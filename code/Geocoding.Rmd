@@ -106,6 +106,7 @@ sites.coded <- cbind(sites, coded[,c(4,5, 10, 16, 17, 22, 27, 28, 33)])
 #
 #sites.coded <- read.csv("/Users/jhm65/Dropbox/Git/Allocation/data_processed/sites_halfway_geocoded.csv", colClasses = "character")
 
+
 ```
 
 
