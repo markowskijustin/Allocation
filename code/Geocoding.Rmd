@@ -270,12 +270,24 @@ sites.coded.almost %>%
 
 ```
 
-## Final Coding and Cleaning
+## Final Coding and Cleaning - this takes a bit for some reason (~15 minutes)
 
 ```{r}
 
-sites.coded.almost
+temp <- sites.coded.almost %>% 
+  filter(is.na(lat)) %>% 
+  select(BHCMIS.ID:Zip) #%>% filter(Site.City == "New Haven")
 
+temp.coded <- geo(street = temp$Site.Street.Address, city = temp$Site.City, state = temp$Site.State, postalcode = temp$Zip, 
+             method = "census", 
+             full_results = TRUE)
+
+sites.coded.almost.final <- sites.coded.almost %>% 
+  filter(!is.na(lat)) %>% 
+  rbind(cbind(temp %>% select(BHCMIS.ID:Zip), temp.coded %>% select(lat, long) ))
+
+sites.coded.almost.final %>% 
+  filter(is.na(lat))
 
 ```
 
