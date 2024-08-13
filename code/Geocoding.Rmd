@@ -226,11 +226,11 @@ sites.coded.almost <- rbind(sites.coded %>%
              coded6 %>% select(lat, long, matched_address)) %>% 
     mutate(lat = ifelse(!is.na(lat), lat, 
                         ifelse(is.na(lat) & !is.na(lat.1), lat.1, 
-                               ifelse(is.na(lat) & is.na(lat.1), lat.2, 
+                               ifelse(is.na(lat) & is.na(lat.1) & !is.na(lat.2), lat.2, 
                                       ifelse(is.na(lat) & is.na(lat.1) & is.na(lat.2), lat.3, NA)))),
            long = ifelse(!is.na(long), long, 
                         ifelse(is.na(long) & !is.na(long.1), long.1, 
-                               ifelse(is.na(long) & is.na(long.1), long.2, 
+                               ifelse(is.na(long) & is.na(long.1) & !is.na(long.2), long.2, 
                                       ifelse(is.na(long) & is.na(long.1) & is.na(long.2), long.3, NA))))) %>% 
     select(lat, long)))
 
@@ -291,6 +291,71 @@ sites.coded.almost.final %>%
 
 ```
 
+
+## Do the rest by hand
+
+```{r}
+
+
+sites.coded.almost.final %>% 
+  filter(is.na(lat))
+
+
+
+ids <- unique(sites.coded.almost.final[is.na(sites.coded.almost.final$lat),]$BHCMIS.ID)
+
+
+i <- 11
+
+sites.coded.almost.final[sites.coded.almost.final$BHCMIS.ID == ids[i] ,] %>% 
+  arrange(Site.Street.Address, Site.Street.Address.3)
+
+
+## Set the function to do the replacement
+sites.hand <- sites.coded.almost.final
+
+
+
+geocoded.by.hand <- rbind(
+  c("010070", "223 Portsea St", 41.297009, -72.933175), 
+  c("010120", "256 Pleasant Street", 42.37918608231927, -72.51987353695388), 
+  c("010120", "754 Alden Street", 42.1088790580001,	-72.543469919), 
+  c("010120", "49-61 St. James Avenue", 42.1109923240001,	-72.573894579), 
+  c("010130	", "404 Chestnut Street", 42.99110061868193, -71.46072106988214), 
+  
+  c("010170	", "100 Morrissey Boulevard", 42.314135433,	-71.046835546), 
+  
+  c("010170", "26-32 DEVINE WAY", 42.32863424664541, -71.05515641272427),
+  c("010220", "330 Washington St STE 510", 41.54341840463725, -72.08685524806683),
+  c("010220", "330 Washington St", 41.54341840463725, -72.08685524806683)
+  
+  )
+
+geocoded.by.hand <- data.frame(geocoded.by.hand) %>% 
+  rename(BHCMIS.ID = X1, add = X2, lat = X3, long = X4)
+
+
+
+sites.hand <- rbind(sites.hand %>% 
+    filter(!is.na(lat)),sites.hand %>% 
+    filter(is.na(lat)) %>% 
+    left_join(geocoded.by.hand, by = c("BHCMIS.ID", "Site.Street.Address" = "add")) %>% 
+    left_join(geocoded.by.hand, by = c("BHCMIS.ID", "Site.Street.Address.2" = "add")) %>% 
+    left_join(geocoded.by.hand, by = c("BHCMIS.ID", "Site.Street.Address.3" = "add")) %>% 
+     mutate(lat = ifelse(!is.na(lat.x), lat.x, 
+                        ifelse(is.na(lat.x) & !is.na(lat.y), lat.y, 
+                               ifelse(is.na(lat.x) & is.na(lat.y) & !is.na(lat.x.x), lat.x.x, 
+                                      ifelse(is.na(lat.x) & is.na(lat.y) & is.na(lat.x.x), lat.y.y, NA)))),
+         long = ifelse(!is.na(long.x), long.x, 
+                        ifelse(is.na(long.x) & !is.na(long.y), long.y, 
+                               ifelse(is.na(long.x) & is.na(long.y) & !is.na(long.x.x), long.x.x, 
+                                      ifelse(is.na(long.x) & is.na(long.y) & is.na(long.x.x), long.y.y, NA))))) %>% 
+    select(BHCMIS.ID:Zip, lat, long)
+)
+
+
+nrow(sites.hand %>% filter(is.na(lat))) / nrow(sites.hand )
+```
 
 
 
