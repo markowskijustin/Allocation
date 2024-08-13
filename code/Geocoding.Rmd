@@ -24,7 +24,7 @@ library(gganimate)
 
 ```{r}
  
-sites <- read_csv("/Users/jhm65/Dropbox/Git/Competition/data_processed/sites_geocoded.csv") %>% 
+sites <- read_csv("/Users/markow/Dropbox/Git/Competition/data_processed/sites_geocoded.csv") %>% 
   select(`BHCMIS ID`:`Site ZIP Code`, Zip)
 
 ```
@@ -104,7 +104,7 @@ sites.coded <- cbind(sites, coded[,c(4,5, 10, 16, 17, 22, 27, 28, 33)])
 
 #write.csv(x = sites.coded, file = "/Users/jhm65/Dropbox/Git/Allocation/data_processed/sites_halfway_geocoded.csv", row.names = FALSE)
 #
-#sites.coded <- read.csv("/Users/jhm65/Dropbox/Git/Allocation/data_processed/sites_halfway_geocoded.csv", colClasses = "character")
+#sites.coded <- read.csv("/Users/markow/Dropbox/Git/Allocation/data_processed/sites_halfway_geocoded.csv", colClasses = "character")
 
 
 ```
@@ -123,11 +123,93 @@ coded3 <- geo(address = tbcoded$add,
              method = "census", 
              full_results = TRUE)
 
+
+
+
+tbcoded <- sites.coded %>% 
+  filter(is.na(lat) & is.na(lat.1) & is.na(lat.2)) %>% 
+  mutate(add = paste(Site.Street.Address, Site.City, Site.State, sep = ", "))
+
+
+coded4.1 <- geo(address = tbcoded[c(1:15000),]$add,
+             method = "census", 
+             full_results = TRUE)
+coded4.2 <- geo(address = tbcoded[c(15001:37249),]$add,
+             method = "census", 
+             full_results = TRUE)
+
+coded4 <- rbind(coded4.1, coded4.2)
+
+
+
+
+
+
+tbcoded <- sites.coded %>% 
+  filter(is.na(lat) & is.na(lat.1) & is.na(lat.2)) %>% 
+  mutate(add = paste(Site.Street.Address.3, Site.City, Site.State, sep = ", "))
+
+coded5 <- geo(address = tbcoded$add, 
+             method = "census", 
+             full_results = TRUE)
+
+
+
+
+#tbcoded <- cbind(tbcoded, coded3 %>% select(lat, long, matched_address))
+
+
+  coded3 %>% select(lat, long, matched_address) %>% filter(!is.na(lat))
+  coded4 %>% select(lat, long, matched_address) %>% filter(!is.na(lat))
+  coded5 %>% select(lat, long, matched_address) %>% filter(!is.na(lat))
+  
+  data.frame(coded3 %>% select(lat, long, matched_address), coded4 %>% select(lat, long, matched_address), coded5 %>% select(lat, long, matched_address)) %>% 
+    mutate(lat = ifelse(!is.na(lat), lat, 
+                        ifelse(is.na(lat) & !is.na(lat.1), lat.1, 
+                               ifelse(is.na(lat) & is.na(lat.1), lat.2, NA))),
+           long = ifelse(!is.na(long), long, 
+                        ifelse(is.na(long) & !is.na(long.1), long.1, 
+                               ifelse(is.na(long) & is.na(long.1), long.2, NA))))
+  
+  
+```
+
+
+```{r}
+
+tbcoded <- sites.coded %>% 
+  filter(is.na(lat) & is.na(lat.1) & is.na(lat.2)) %>% 
+  mutate(add = paste(Site.Street.Address, Site.Street.Address.2, sep = ", "))
+
+
+coded3 <- geo(address = tbcoded$add, 
+             method = "census", 
+             full_results = TRUE)
+
 tbcoded <- cbind(tbcoded, coded3 %>% select(lat, long, matched_address))
 
 
   
 ```
+
+
+
+```{r}
+tbcoded <- sites.coded %>% 
+  filter(is.na(lat) & is.na(lat.1) & is.na(lat.2)) %>% 
+  mutate(add = paste(Site.Street.Address, Site.Street.Address.2, sep = ", "))
+
+
+coded3 <- geo(address = tbcoded$add, 
+             method = "census", 
+             full_results = TRUE)
+
+tbcoded <- cbind(tbcoded, coded3 %>% select(lat, long, matched_address))
+
+
+  
+```
+
 
 
 
