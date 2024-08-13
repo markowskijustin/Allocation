@@ -155,6 +155,23 @@ coded5 <- geo(address = tbcoded$add,
 
 
 
+tbcoded <- sites.coded %>% 
+  filter(is.na(lat) & is.na(lat.1) & is.na(lat.2)) %>% 
+  mutate(add = paste(Site.Street.Address, Site.City, Site.State, Zip, sep = ", "))
+
+
+coded6.1 <- geo(address = tbcoded[c(1:15000),]$add,
+             method = "census", 
+             full_results = TRUE)
+coded6.2 <- geo(address = tbcoded[c(15001:37249),]$add,
+             method = "census", 
+             full_results = TRUE)
+
+coded6 <- rbind(coded6.1, coded6.2)
+
+
+
+
 
 #tbcoded <- cbind(tbcoded, coded3 %>% select(lat, long, matched_address))
 
@@ -162,54 +179,105 @@ coded5 <- geo(address = tbcoded$add,
   coded3 %>% select(lat, long, matched_address) %>% filter(!is.na(lat))
   coded4 %>% select(lat, long, matched_address) %>% filter(!is.na(lat))
   coded5 %>% select(lat, long, matched_address) %>% filter(!is.na(lat))
+  coded6 %>% select(lat, long, matched_address) %>% filter(!is.na(lat))
   
-  data.frame(coded3 %>% select(lat, long, matched_address), coded4 %>% select(lat, long, matched_address), coded5 %>% select(lat, long, matched_address)) %>% 
+
+  
+  sites.coded %>% 
+  filter(is.na(lat) & is.na(lat.1) & is.na(lat.2)) %>% 
+  select(BHCMIS.ID:Zip) %>% 
+  cbind(
+  data.frame(coded3 %>% select(lat, long, matched_address), 
+             coded4 %>% select(lat, long, matched_address), 
+             coded5 %>% select(lat, long, matched_address), 
+             coded6 %>% select(lat, long, matched_address)) %>% 
     mutate(lat = ifelse(!is.na(lat), lat, 
+                        ifelse(is.na(lat) & !is.na(lat.1), lat.1, 
+                               ifelse(is.na(lat) & is.na(lat.1), lat.2, 
+                                      ifelse(is.na(lat) & is.na(lat.1) & is.na(lat.2), lat.3, NA)))),
+           long = ifelse(!is.na(long), long, 
+                        ifelse(is.na(long) & !is.na(long.1), long.1, 
+                               ifelse(is.na(long) & is.na(long.1), long.2, 
+                                      ifelse(is.na(long) & is.na(long.1) & is.na(long.2), long.3, NA))))) %>% 
+    select(lat, long)) %>% 
+    filter(is.na(lat))
+```
+
+## Merge Sets, make some more progress on coding
+
+```{r}
+  
+sites.coded.almost <- rbind(sites.coded %>% 
+  filter(!is.na(lat) | !is.na(lat.1) | !is.na(lat.2)) %>% 
+   mutate(lat = ifelse(!is.na(lat), lat, 
                         ifelse(is.na(lat) & !is.na(lat.1), lat.1, 
                                ifelse(is.na(lat) & is.na(lat.1), lat.2, NA))),
            long = ifelse(!is.na(long), long, 
                         ifelse(is.na(long) & !is.na(long.1), long.1, 
-                               ifelse(is.na(long) & is.na(long.1), long.2, NA))))
-  
-  
-```
-
-
-```{r}
-
-tbcoded <- sites.coded %>% 
+                               ifelse(is.na(long) & is.na(long.1), long.2, NA)))) %>% 
+  select(BHCMIS.ID:Zip, lat, long), 
+  sites.coded %>% 
   filter(is.na(lat) & is.na(lat.1) & is.na(lat.2)) %>% 
-  mutate(add = paste(Site.Street.Address, Site.Street.Address.2, sep = ", "))
+  select(BHCMIS.ID:Zip) %>% 
+  cbind(
+  data.frame(coded3 %>% select(lat, long, matched_address), 
+             coded4 %>% select(lat, long, matched_address), 
+             coded5 %>% select(lat, long, matched_address), 
+             coded6 %>% select(lat, long, matched_address)) %>% 
+    mutate(lat = ifelse(!is.na(lat), lat, 
+                        ifelse(is.na(lat) & !is.na(lat.1), lat.1, 
+                               ifelse(is.na(lat) & is.na(lat.1), lat.2, 
+                                      ifelse(is.na(lat) & is.na(lat.1) & is.na(lat.2), lat.3, NA)))),
+           long = ifelse(!is.na(long), long, 
+                        ifelse(is.na(long) & !is.na(long.1), long.1, 
+                               ifelse(is.na(long) & is.na(long.1), long.2, 
+                                      ifelse(is.na(long) & is.na(long.1) & is.na(long.2), long.3, NA))))) %>% 
+    select(lat, long)))
 
 
-coded3 <- geo(address = tbcoded$add, 
+table(sites.coded.almost$Year, is.na(sites.coded.almost$lat))
+
+
+
+
+tbcoded <- sites.coded.almost %>% 
+  filter(is.na(lat)) %>% 
+  mutate(add = paste(Site.Street.Address.3, Site.City, Site.State, Zip, sep = ", "))
+
+
+coded7.1 <- geo(address = tbcoded[c(1:15000),]$add,
+             method = "census", 
+             full_results = TRUE)
+coded7.2 <- geo(address = tbcoded[c(15001:27851),]$add,
              method = "census", 
              full_results = TRUE)
 
-tbcoded <- cbind(tbcoded, coded3 %>% select(lat, long, matched_address))
+coded7 <- rbind(coded7.1, coded7.2)
 
 
-  
+coded7 %>% select(lat, long) %>% filter(!is.na(lat))
+
+
+sites.coded.almost <- sites.coded.almost %>% 
+  filter(!is.na(lat)) %>% 
+  rbind(cbind(tbcoded %>% select(BHCMIS.ID:Zip), coded7 %>% select(lat, long) ))
+
+table(sites.coded.almost$Year, is.na(sites.coded.almost$lat))
+
+
+sites.coded.almost %>% 
+  filter(is.na(lat))
+
 ```
 
-
+## Final Coding and Cleaning
 
 ```{r}
-tbcoded <- sites.coded %>% 
-  filter(is.na(lat) & is.na(lat.1) & is.na(lat.2)) %>% 
-  mutate(add = paste(Site.Street.Address, Site.Street.Address.2, sep = ", "))
+
+sites.coded.almost
 
 
-coded3 <- geo(address = tbcoded$add, 
-             method = "census", 
-             full_results = TRUE)
-
-tbcoded <- cbind(tbcoded, coded3 %>% select(lat, long, matched_address))
-
-
-  
 ```
-
 
 
 
