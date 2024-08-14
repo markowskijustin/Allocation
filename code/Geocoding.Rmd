@@ -248,7 +248,7 @@ tbcoded <- sites.coded.almost %>%
 coded7.1 <- geo(address = tbcoded[c(1:15000),]$add,
              method = "census", 
              full_results = TRUE)
-coded7.2 <- geo(address = tbcoded[c(15001:27851),]$add,
+coded7.2 <- geo(address = tbcoded[c(15001:26765),]$add,
              method = "census", 
              full_results = TRUE)
 
@@ -419,7 +419,7 @@ geocoded.by.hand <- data.frame(geocoded.by.hand) %>%
 
 
 sites.hand %>% 
-  filter(BHCMIS.ID == "0452070") %>% 
+  filter(BHCMIS.ID == "011210") %>% 
   arrange(Site.City, Site.Street.Address, Site.Street.Address.2, Site.Street.Address.3) %>% 
   select(lat, long, Site.Name:Zip)
 
