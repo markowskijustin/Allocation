@@ -622,6 +622,13 @@ todo <- table((sites.hand[is.na(sites.hand$lat),]$BHCMIS.ID))[order(table((sites
 todo.alt <- todo[order(names(todo))] / table(sites.hand[sites.hand$BHCMIS.ID %in% names(todo),]$BHCMIS.ID)
 
 todo.alt[order(todo.alt, decreasing = T)]
+
+```
+
+
+## Write Temp
+```{r}
+write.csv(x = sites.hand, file = "/Users/markow/Dropbox/Git/Allocation/data_processed/sites_nintypercent_geocoded.csv", row.names = FALSE)
 ```
 
 
