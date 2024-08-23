@@ -628,8 +628,14 @@ todo.alt[order(todo.alt, decreasing = T)]
 
 ## Write Temp
 ```{r}
-write.csv(x = sites.hand, file = "/Users/markow/Dropbox/Git/Allocation/data_processed/sites_nintypercent_geocoded.csv", row.names = FALSE)
+#write.csv(x = sites.hand, file = "/Users/markow/Dropbox/Git/Allocation/data_processed/sites_nintypercent_geocoded.csv", row.names = FALSE)
 ```
+
+
+
+
+
+
 
 
 
