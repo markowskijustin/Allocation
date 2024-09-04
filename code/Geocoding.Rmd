@@ -573,7 +573,7 @@ geocoded.by.hand <- data.frame(geocoded.by.hand) %>%
 
 
 sites.hand %>% 
-  filter(BHCMIS.ID == "0622460") %>% 
+  filter(BHCMIS.ID == "053160") %>% 
   arrange(Site.City, Site.Street.Address, Site.Street.Address.2, Site.Street.Address.3) %>% 
   select(lat, long, Site.Name:Zip)
 
@@ -633,6 +633,17 @@ todo.alt[order(todo.alt, decreasing = T)]
 
 
 
+```{r}
+
+
+table(sites$Year, sites$`BHCMIS ID`)
+
+sites %>% 
+  group_by(Year) %>% 
+  summarise(n_distinct(`BHCMIS ID`), n()) %>% 
+  as.matrix
+
+```
 
 
 
